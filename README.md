@@ -70,7 +70,10 @@ Replace the file, keeping the name, to publish a new version.
 `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to
 `main`, and can also be run manually from the Actions tab.
 
-One-time setup: in **Settings → Pages**, set **Source** to **GitHub Actions**.
+The workflow enables Pages itself (`configure-pages` runs with `enablement: true`), so no manual
+setup is needed — provided the repository is eligible. **GitHub Pages requires the repository to be
+public, or the account to be on a paid plan** (Pro, Team or Enterprise). A private repository on a
+free account cannot serve Pages at all, and the deploy step will fail regardless of the workflow.
 
 ## Project structure
 
