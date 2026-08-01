@@ -5,6 +5,7 @@ import {
   IconArrow,
   IconDownload,
   IconGitHub,
+  IconInstagram,
   IconLinkedIn,
   IconMail,
   IconPhone,
@@ -93,6 +94,15 @@ export default function Hero() {
                 aria-label="LinkedIn profile"
               >
                 <IconLinkedIn size={17} />
+              </a>
+              <a
+                className="icon-btn"
+                href={profile.instagram}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label="Instagram profile"
+              >
+                <IconInstagram size={18} />
               </a>
               <a className="icon-btn" href={`mailto:${profile.email}`} aria-label="Send an email">
                 <IconMail size={18} />

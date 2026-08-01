@@ -3,39 +3,34 @@ import BackToTop from './components/BackToTop';
 import Contact from './components/Contact';
 import Experience from './components/Experience';
 import Footer from './components/Footer';
-import GitHubStats from './components/GitHubStats';
 import Hero from './components/Hero';
-import Impact from './components/Impact';
-import Industries from './components/Industries';
 import Nav from './components/Nav';
 import Projects from './components/Projects';
-import ResumeCta from './components/ResumeCta';
-import Services from './components/Services';
 import Skills from './components/Skills';
-import Timeline from './components/Timeline';
 
+/**
+ * Six sections, each saying one thing. An earlier cut had twelve, and the
+ * products, domains and capabilities were each restated three times over —
+ * Impact folds into Experience, domains live on the project cards, and the
+ * résumé download sits with the rest of the contact routes.
+ */
 export default function App() {
   return (
     <>
       <div className="backdrop" aria-hidden>
         <div className="backdrop__grid" />
-        <div className="backdrop__glow" />
+        <div className="backdrop__glow backdrop__glow--a" />
+        <div className="backdrop__glow backdrop__glow--b" />
       </div>
 
       <Nav />
 
-      <main>
+      <main id="main">
         <Hero />
         <About />
-        <Impact />
         <Experience />
-        <Industries />
-        <Skills />
         <Projects />
-        <Timeline />
-        <Services />
-        <GitHubStats />
-        <ResumeCta />
+        <Skills />
         <Contact />
       </main>
 
