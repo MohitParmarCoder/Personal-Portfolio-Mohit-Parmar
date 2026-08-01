@@ -26,6 +26,8 @@ export const profile = {
   linkedinHandle: 'mohitparmar9868',
   resume: 'Mohit_Parmar_Resume.pdf',
   photo: 'profile.jpg',
+  /** 4:5 crop for the tall hero tile; the square one is for the avatar and icons. */
+  portrait: 'profile-portrait.jpg',
   availability: 'Open to senior full stack roles',
 } as const;
 
