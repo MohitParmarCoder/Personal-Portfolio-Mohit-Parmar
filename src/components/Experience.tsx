@@ -3,12 +3,12 @@ import Reveal from './Reveal';
 
 export default function Experience() {
   return (
-    <section id="experience" className="section">
+    <section id="experience" className="section section--tint">
       <div className="container">
         <Reveal className="section-head">
           <span className="eyebrow">Experience</span>
           <h2 className="section-title">
-            Nearly five years of <span className="gradient-text">shipping production software</span>
+            Nearly five years of <em>shipping production software</em>
           </h2>
           <p className="section-sub">
             Product names and clients are generalised — the work below is described by capability
@@ -28,10 +28,22 @@ export default function Experience() {
                       {job.current && <span className="badge-now">Current</span>}
                     </div>
                   </div>
-                  <span className="exp__period">{job.period}</span>
+                  <div className="exp__when">
+                    {job.period}
+                    <small>{job.duration}</small>
+                  </div>
                 </header>
 
                 <p className="exp__summary">{job.summary}</p>
+
+                <div className="exp__metrics">
+                  {job.metrics.map((metric) => (
+                    <div className="exp__metric" key={metric.label}>
+                      <b>{metric.value}</b>
+                      <span>{metric.label}</span>
+                    </div>
+                  ))}
+                </div>
 
                 <h4 className="exp__label">Products worked on</h4>
                 <div className="exp__products">
@@ -47,7 +59,7 @@ export default function Experience() {
                   ))}
                 </div>
 
-                <h4 className="exp__label">Responsibilities</h4>
+                <h4 className="exp__label">What I was responsible for</h4>
                 <ul className="exp__resp">
                   {job.responsibilities.map((item) => (
                     <li key={item}>{item}</li>

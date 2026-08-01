@@ -5,6 +5,8 @@ import Experience from './components/Experience';
 import Footer from './components/Footer';
 import GitHubStats from './components/GitHubStats';
 import Hero from './components/Hero';
+import Impact from './components/Impact';
+import Industries from './components/Industries';
 import Nav from './components/Nav';
 import Projects from './components/Projects';
 import ResumeCta from './components/ResumeCta';
@@ -17,8 +19,7 @@ export default function App() {
     <>
       <div className="backdrop" aria-hidden>
         <div className="backdrop__grid" />
-        <div className="backdrop__orb backdrop__orb--a" />
-        <div className="backdrop__orb backdrop__orb--b" />
+        <div className="backdrop__glow" />
       </div>
 
       <Nav />
@@ -26,7 +27,9 @@ export default function App() {
       <main>
         <Hero />
         <About />
+        <Impact />
         <Experience />
+        <Industries />
         <Skills />
         <Projects />
         <Timeline />

@@ -8,7 +8,7 @@ export default function Timeline() {
         <Reveal className="section-head section-head--center">
           <span className="eyebrow">Timeline</span>
           <h2 className="section-title">
-            Career and <span className="gradient-text">education</span>
+            Career and <em>education</em>
           </h2>
         </Reveal>
 

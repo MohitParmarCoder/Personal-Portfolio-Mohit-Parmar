@@ -19,12 +19,12 @@ export default function GitHubStats() {
   ];
 
   return (
-    <section className="section">
+    <section className="section section--tint">
       <div className="container">
         <Reveal className="section-head section-head--center">
           <span className="eyebrow">Coding activity</span>
           <h2 className="section-title">
-            On <span className="gradient-text">GitHub</span>
+            On <em>GitHub</em>
           </h2>
         </Reveal>
 
@@ -43,7 +43,7 @@ export default function GitHubStats() {
               {cards.map((card, index) => (
                 <Reveal key={card.label} delay={index * 70}>
                   <div className="card gh__card">
-                    <div className="gh__value gradient-text">
+                    <div className="gh__value">
                       {state === 'loading' ? '—' : (card.value ?? '—')}
                     </div>
                     <div className="gh__label">{card.label}</div>

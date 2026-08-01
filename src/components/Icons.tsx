@@ -59,6 +59,13 @@ export const IconArrow = ({ size = 16 }: IconProps) => (
   </svg>
 );
 
+export const IconTrend = ({ size = 16 }: IconProps) => (
+  <svg {...base(size)}>
+    <path d="m3 17 6-6 4 4 8-8" />
+    <path d="M15 7h6v6" />
+  </svg>
+);
+
 export const IconArrowUp = ({ size = 18 }: IconProps) => (
   <svg {...base(size)}>
     <path d="M12 19V5" />

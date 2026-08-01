@@ -4,39 +4,52 @@
  *
  * Client and product names are deliberately generalised — work delivered under
  * commercial contracts is described by capability, not by the customer's name.
+ *
+ * Every figure quoted in `impact` and in the experience entries comes from
+ * Mohit's own CV. Nothing here is estimated or rounded up.
  */
 
 export const profile = {
   name: 'Mohit Parmar',
+  firstName: 'Mohit',
   role: 'Senior Full Stack Developer',
   headline: 'React.js · Node.js · TypeScript · AWS · AI-Assisted Development',
   tagline:
-    'Building scalable web applications, business automation platforms, CRM systems and modern SaaS products with nearly 5 years of professional experience.',
+    'I build the systems businesses run on — CRMs, HR platforms, compliance tools and trading dashboards — with nearly five years spent shipping them to production.',
   location: 'Ahmedabad, Gujarat, India',
   email: 'mohitparmar9868@gmail.com',
   phone: '+91 9724787742',
   phoneHref: '+919724787742',
   github: 'https://github.com/MohitParmarCoder',
   githubUser: 'MohitParmarCoder',
-  linkedin: 'https://www.linkedin.com/in/mohit-parmar-729717185',
-  linkedinLabel: 'linkedin.com/in/mohit-parmar-729717185',
+  linkedin: 'https://www.linkedin.com/in/mohitparmar9868',
+  linkedinHandle: 'mohitparmar9868',
   resume: 'Mohit_Parmar_Resume.pdf',
+  photo: 'profile.jpg',
   availability: 'Open to senior full stack roles',
 } as const;
 
+export const roleRotation = [
+  'Senior Full Stack Developer',
+  'React.js Specialist',
+  'Node.js & TypeScript Engineer',
+  'AWS Serverless Developer',
+  'AI-Assisted Development Advocate',
+] as const;
+
 export const heroStats = [
-  { value: '5', suffix: 'yrs', label: 'Professional experience' },
-  { value: '10', suffix: '+', label: 'Products shipped' },
-  { value: '8', suffix: '+', label: 'Industry domains' },
-  { value: '2', suffix: '', label: 'Degrees in computing' },
+  { value: 5, suffix: '', label: 'Years shipping production software' },
+  { value: 12, suffix: '+', label: 'Enterprise products delivered' },
+  { value: 10, suffix: '', label: 'Industry domains worked in' },
+  { value: 2, suffix: '', label: 'Degrees in computer applications' },
 ] as const;
 
 export const about = {
   intro: [
-    "I'm a Full Stack Developer with nearly five years of experience building scalable business applications across HRMS, recruitment, insurance, sports management, hospitality, compliance, cryptocurrency and CRM.",
-    'I enjoy designing clean architectures, solving genuinely awkward business problems, building interfaces people actually understand, and writing backends that hold up under load.',
-    'My work has ranged from enterprise HR platforms to a no-code application builder and, most recently, a real-time cryptocurrency trading system.',
-    'I believe in continuous learning, and I use AI development tools as a daily part of my workflow — for architecture exploration, debugging, testing and documentation, not just code generation.',
+    "I'm a Full Stack Developer with nearly five years spent building the software businesses actually run on — HR platforms, recruitment pipelines, insurance claim systems, CRMs, compliance tooling and, most recently, a real-time cryptocurrency trading platform.",
+    'What I enjoy is the part most people skip: understanding the business problem well enough that the architecture falls out of it naturally. Clean data models, APIs that make sense a year later, and interfaces the people who use them all day do not have to fight.',
+    'The largest thing I have built is a no-code application platform — a system that let non-developers assemble working business applications from a drag-and-drop builder, dynamic forms, a workflow engine and a database designer.',
+    'I use AI development tools as a genuine part of my workflow — for architecture exploration, debugging, test generation and documentation, not just autocomplete. It is a large part of how I ship as much as I do without cutting corners.',
   ],
   summary:
     'Results-driven Full Stack Developer experienced in delivering enterprise-grade web applications with modern JavaScript. Comfortable leading development efforts, mentoring junior developers, designing scalable architectures and shipping production-ready software.',
@@ -50,12 +63,125 @@ export const about = {
   ],
 } as const;
 
+/** Measured outcomes, each one quoted from Mohit's CV. */
+export const impact = [
+  {
+    value: '20–30%',
+    label: 'Operational efficiency gained',
+    detail:
+      'Across the sports, gym and salon management platforms, measured against the manual processes they replaced.',
+  },
+  {
+    value: '30%',
+    label: 'Less development time',
+    detail:
+      'Custom applications assembled on the no-code platform instead of being built from scratch each time.',
+  },
+  {
+    value: '40%',
+    label: 'Faster API integration',
+    detail:
+      'Standardised integration and testing workflow across modules, cutting the time to wire up each new service.',
+  },
+  {
+    value: '25%',
+    label: 'Efficiency on large-scale apps',
+    detail:
+      'CRM, HRMS and e-recruitment platforms, through better data modelling and automated workflows.',
+  },
+  {
+    value: '15%',
+    label: 'Team productivity lift',
+    detail:
+      'Automating routine work — email and SMS notification pipelines that previously ran by hand.',
+  },
+  {
+    value: '3+',
+    label: 'Databases tuned for scale',
+    detail:
+      'PostgreSQL schemas optimised with TypeORM for performance across concurrently running applications.',
+  },
+] as const;
+
+export type Industry = {
+  name: string;
+  icon: string;
+  blurb: string;
+  built: string[];
+};
+
+/** The domains the work spans — the breadth is the point of this section. */
+export const industries: Industry[] = [
+  {
+    name: 'Fintech & Trading',
+    icon: '📈',
+    blurb: 'Real-time market systems where latency and correctness both matter.',
+    built: ['Live market data', 'Order execution', 'Portfolio management', 'Trading analytics'],
+  },
+  {
+    name: 'Insurance & Legal',
+    icon: '⚖️',
+    blurb: 'Document-heavy claim processing built around how law firms actually work.',
+    built: ['Claim workflows', 'Case management', 'Document handling', 'Client portal'],
+  },
+  {
+    name: 'Human Resources',
+    icon: '👥',
+    blurb: 'The full employee lifecycle, from offer letter through payroll.',
+    built: ['Payroll', 'Attendance', 'Leave management', 'Employee portal'],
+  },
+  {
+    name: 'Recruitment & Talent',
+    icon: '🎯',
+    blurb: 'Structured hiring pipelines with candidates moving through defined stages.',
+    built: ['Hiring pipeline', 'Candidate tracking', 'Résumé management', 'Interview scheduling'],
+  },
+  {
+    name: 'Sales & CRM',
+    icon: '🤝',
+    blurb: 'Lead lifecycle and workflow automation from first touch to closed deal.',
+    built: ['Lead lifecycle', 'Workflow automation', 'Interaction tracking', 'Pipeline reporting'],
+  },
+  {
+    name: 'Sports & Education',
+    icon: '🎓',
+    blurb: 'Academy management connecting students, coaches and parents on one schedule.',
+    built: ['Student records', 'Coach management', 'Attendance', 'Parent communication'],
+  },
+  {
+    name: 'Health & Fitness',
+    icon: '🏋️',
+    blurb: 'Membership businesses with recurring billing and access control.',
+    built: ['Memberships', 'Subscription billing', 'Attendance', 'Invoicing'],
+  },
+  {
+    name: 'Beauty & Hospitality',
+    icon: '💇',
+    blurb: 'Counter-speed software — fast enough for staff to use with a client waiting.',
+    built: ['Appointment booking', 'Billing', 'Inventory', 'Customer records'],
+  },
+  {
+    name: 'Compliance & Workforce',
+    icon: '🛡️',
+    blurb: 'Documentation and monitoring that holds up when an audit arrives.',
+    built: ['Compliance tracking', 'Document control', 'Operational monitoring'],
+  },
+  {
+    name: 'Developer Platforms',
+    icon: '⚙️',
+    blurb: 'A no-code builder letting non-developers assemble working applications.',
+    built: ['Drag-and-drop builder', 'Workflow engine', 'Database designer', 'Report builder'],
+  },
+];
+
 export type Experience = {
   company: string;
   role: string;
   period: string;
+  duration: string;
   current: boolean;
   summary: string;
+  metrics: { value: string; label: string }[];
   products: { name: string; points: string[] }[];
   responsibilities: string[];
   stack: string[];
@@ -66,20 +192,26 @@ export const experience: Experience[] = [
     company: 'Enqcode Technologies Pvt. Ltd.',
     role: 'Full Stack Developer',
     period: 'August 2025 — Present',
+    duration: 'Current role',
     current: true,
     summary:
-      'Building enterprise software across sales automation, legal claim processing and real-time financial trading, on a React front end with Node.js, .NET and AWS serverless behind it.',
+      'Building enterprise software across sales automation, legal claim processing and real-time financial trading — React on the front, Node.js and .NET services behind it, AWS serverless underneath.',
+    metrics: [
+      { value: '3', label: 'Platforms in flight' },
+      { value: '2', label: 'Backend stacks integrated' },
+      { value: 'Lambda', label: 'Serverless architecture' },
+    ],
     products: [
       {
-        name: 'Lead Management Platform',
+        name: 'Cryptocurrency Trading Platform',
         points: [
-          'Lead lifecycle management from capture to close',
-          'Workflow automation across sales stages',
-          'Customer interaction tracking and activity history',
+          'Real-time market data streaming',
+          'Order execution and portfolio management',
+          'Trading dashboard with analytics',
         ],
       },
       {
-        name: 'Insurance Claim Management System',
+        name: 'Insurance Claim Management',
         points: [
           'Claim processing built for law firm workflows',
           'Document workflows and case management',
@@ -87,11 +219,11 @@ export const experience: Experience[] = [
         ],
       },
       {
-        name: 'Cryptocurrency Trading Platform',
+        name: 'Lead Management Platform',
         points: [
-          'Real-time market data streaming',
-          'Order execution and portfolio management',
-          'Trading dashboard with analytics',
+          'Lead lifecycle from capture to close',
+          'Workflow automation across sales stages',
+          'Customer interaction tracking',
         ],
       },
     ],
@@ -109,10 +241,24 @@ export const experience: Experience[] = [
     company: 'Karvish Enterprise Pvt. Ltd.',
     role: 'Full Stack Developer',
     period: 'August 2021 — July 2025',
+    duration: '3 years 11 months',
     current: false,
     summary:
-      'Delivered a broad portfolio of enterprise products — HR, recruitment, CRM and compliance — alongside a no-code application builder that let non-developers assemble business applications.',
+      'Delivered a broad portfolio of enterprise products — HR, recruitment, CRM and compliance — alongside a no-code application builder that let non-developers assemble business applications without writing code.',
+    metrics: [
+      { value: '20–30%', label: 'Efficiency gained' },
+      { value: '40%', label: 'Faster integrations' },
+      { value: '8+', label: 'Products shipped' },
+    ],
     products: [
+      {
+        name: 'No-Code Application Builder',
+        points: [
+          'Drag-and-drop UI builder and database designer',
+          'Dynamic forms, workflow builder and report builder',
+          'Role management and API integration',
+        ],
+      },
       {
         name: 'HRMS Platform',
         points: [
@@ -131,14 +277,10 @@ export const experience: Experience[] = [
       },
       {
         name: 'Sports Academy CRM',
-        points: [
-          'Student and coach management',
-          'Attendance and payments',
-          'Parent communication',
-        ],
+        points: ['Student and coach management', 'Attendance and payments', 'Parent communication'],
       },
       {
-        name: 'Salon & Gym Management CRM',
+        name: 'Salon & Gym Management',
         points: [
           'Appointment booking and billing',
           'Inventory and customer management',
@@ -146,29 +288,17 @@ export const experience: Experience[] = [
         ],
       },
       {
-        name: 'Compliance Management Platform',
-        points: [
-          'Workforce compliance tracking',
-          'Documentation management',
-          'Operational monitoring',
-        ],
-      },
-      {
-        name: 'No-Code / Low-Code Application Builder',
-        points: [
-          'Drag-and-drop UI builder and database designer',
-          'Dynamic forms, workflow builder and report builder',
-          'Role management and API integration',
-        ],
+        name: 'Compliance Management',
+        points: ['Workforce compliance tracking', 'Documentation management', 'Operational monitoring'],
       },
     ],
     responsibilities: [
       'Designed and deployed full-stack platforms that lifted operational efficiency by 20–30%',
       'Built core modules: recruitment, attendance, billing, expenses, inventory and payroll',
-      'Optimised PostgreSQL schemas with TypeORM across multiple applications',
+      'Optimised PostgreSQL schemas with TypeORM across 3+ concurrent applications',
       'Integrated payment gateways, Google Maps, cloud storage and communication APIs',
       'Automated UI testing with Playwright and backend testing with Jest',
-      'Built role-based dashboards and reporting for service businesses',
+      'Automated email and SMS notification pipelines, lifting team productivity by 15%',
     ],
     stack: ['React.js', 'Node.js', 'PostgreSQL', 'TypeORM', 'Sequelize', 'Playwright', 'Jest'],
   },
@@ -193,13 +323,7 @@ export const skillGroups: SkillGroup[] = [
   {
     title: 'Backend',
     icon: 'server',
-    skills: [
-      'Node.js',
-      'Express.js',
-      '.NET Integration',
-      'REST APIs',
-      'Serverless Framework',
-    ],
+    skills: ['Node.js', 'Express.js', '.NET Integration', 'REST APIs', 'Serverless Framework'],
   },
   {
     title: 'Database',
@@ -207,14 +331,14 @@ export const skillGroups: SkillGroup[] = [
     skills: ['PostgreSQL', 'MySQL', 'Sequelize ORM', 'TypeORM', 'Schema Design'],
   },
   {
-    title: 'Cloud',
+    title: 'Cloud & DevOps',
     icon: 'cloud',
     skills: ['AWS Lambda', 'EC2', 'S3', 'CloudFront', 'RDS', 'CI/CD Pipelines'],
   },
   {
-    title: 'Tools & Testing',
+    title: 'Testing & Tools',
     icon: 'tool',
-    skills: ['Git', 'GitHub', 'Postman', 'Playwright', 'Jest'],
+    skills: ['Playwright', 'Jest', 'Git', 'GitHub', 'Postman'],
   },
   {
     title: 'AI-Assisted Development',
@@ -258,7 +382,9 @@ export type Project = {
   title: string;
   icon: string;
   category: 'Fintech' | 'Enterprise' | 'CRM' | 'Platform' | 'Personal';
+  domain: string;
   blurb: string;
+  impact?: string;
   features: string[];
   stack: string[];
   status?: string;
@@ -270,6 +396,7 @@ export const projects: Project[] = [
     title: 'Cryptocurrency Trading Platform',
     icon: '🚀',
     category: 'Fintech',
+    domain: 'Fintech & Trading',
     blurb:
       'A modern trading platform with live market data, portfolio management and order execution, built for speed under constantly changing data.',
     features: [
@@ -282,18 +409,38 @@ export const projects: Project[] = [
     status: 'In development',
   },
   {
+    title: 'No-Code Application Builder',
+    icon: '⚙️',
+    category: 'Platform',
+    domain: 'Developer Platforms',
+    blurb:
+      'The largest product I have worked on — a platform that lets businesses assemble working applications without writing code.',
+    impact: 'Cut development time by 30% on custom applications',
+    features: [
+      'Drag-and-drop UI builder',
+      'Dynamic forms and workflow builder',
+      'Database designer',
+      'Role management and API integration',
+      'Report builder',
+    ],
+    stack: ['React.js', 'Node.js', 'PostgreSQL'],
+  },
+  {
     title: 'HRMS Platform',
     icon: '🏢',
     category: 'Enterprise',
+    domain: 'Human Resources',
     blurb:
       'An enterprise human resource management system covering the full employee lifecycle, from hiring through payroll.',
+    impact: 'Part of the platform set that lifted efficiency by 25%',
     features: ['Payroll', 'Attendance', 'Leave management', 'Recruitment', 'Employee portal'],
     stack: ['React.js', 'Node.js', 'PostgreSQL', 'TypeORM'],
   },
   {
     title: 'Lead Management System',
-    icon: '📈',
+    icon: '📊',
     category: 'Enterprise',
+    domain: 'Sales & CRM',
     blurb:
       'A sales pipeline and workflow automation platform that tracks every customer interaction from first touch to closed deal.',
     features: [
@@ -308,60 +455,41 @@ export const projects: Project[] = [
     title: 'Insurance Claim Management',
     icon: '⚖️',
     category: 'Enterprise',
+    domain: 'Insurance & Legal',
     blurb:
       'An enterprise application for legal firms handling insurance claims, built around document-heavy case workflows.',
     features: ['Claim processing', 'Document workflows', 'Case management', 'Client portal'],
     stack: ['React.js', '.NET APIs', 'AWS'],
   },
   {
-    title: 'No-Code Application Builder',
-    icon: '⚙️',
-    category: 'Platform',
-    blurb:
-      'The largest product I have worked on — a platform that lets businesses assemble working applications without writing code.',
-    features: [
-      'Drag-and-drop UI builder',
-      'Dynamic forms and workflow builder',
-      'Database designer',
-      'Role management and API integration',
-      'Report builder',
-    ],
-    stack: ['React.js', 'Node.js', 'PostgreSQL'],
-  },
-  {
     title: 'E-Recruitment Platform',
-    icon: '🧑‍💼',
+    icon: '🎯',
     category: 'Enterprise',
+    domain: 'Recruitment & Talent',
     blurb:
       'A hiring platform that moves candidates through a structured pipeline, with résumé handling and scheduling built in.',
-    features: [
-      'Hiring pipeline',
-      'Candidate tracking',
-      'Résumé management',
-      'Interview scheduling',
-    ],
+    features: ['Hiring pipeline', 'Candidate tracking', 'Résumé management', 'Interview scheduling'],
     stack: ['React.js', 'Node.js', 'PostgreSQL'],
   },
   {
     title: 'Sports Academy CRM',
     icon: '🎓',
     category: 'CRM',
+    domain: 'Sports & Education',
     blurb:
       'A management solution for sports academies, connecting students, coaches and parents around a shared schedule.',
-    features: [
-      'Student and coach management',
-      'Attendance',
-      'Payments',
-      'Parent communication',
-    ],
+    impact: 'Improved day-to-day operational efficiency by 20–30%',
+    features: ['Student and coach management', 'Attendance', 'Payments', 'Parent communication'],
     stack: ['React.js', 'Node.js', 'PostgreSQL', 'Razorpay'],
   },
   {
     title: 'Salon Management CRM',
     icon: '💇',
     category: 'CRM',
+    domain: 'Beauty & Hospitality',
     blurb:
       'Appointment, billing and customer management for salons, designed for staff who need it to be fast at the counter.',
+    impact: 'Improved day-to-day operational efficiency by 20–30%',
     features: ['Appointment booking', 'Billing', 'Inventory', 'Customer management'],
     stack: ['React.js', 'Node.js', 'MySQL'],
   },
@@ -369,8 +497,10 @@ export const projects: Project[] = [
     title: 'Gym Management Software',
     icon: '🏋️',
     category: 'CRM',
+    domain: 'Health & Fitness',
     blurb:
       'Membership and attendance management with recurring subscription billing for fitness businesses.',
+    impact: 'Improved day-to-day operational efficiency by 20–30%',
     features: ['Membership', 'Subscription billing', 'Attendance', 'Invoicing'],
     stack: ['React.js', 'Node.js', 'PostgreSQL'],
   },
@@ -378,6 +508,7 @@ export const projects: Project[] = [
     title: 'Compliance Management Platform',
     icon: '🛡️',
     category: 'Enterprise',
+    domain: 'Compliance & Workforce',
     blurb:
       'Workforce compliance tracking with the documentation and operational monitoring that audits depend on.',
     features: ['Workforce compliance', 'Documentation control', 'Operational monitoring'],
@@ -387,14 +518,10 @@ export const projects: Project[] = [
     title: 'PixelNova Studios',
     icon: '🎨',
     category: 'Personal',
+    domain: 'Personal R&D',
     blurb:
       'A full-stack JavaScript project I built to explore end-to-end React and Node application structure outside of client work.',
-    features: [
-      'React front end',
-      'Node.js backend',
-      'Full-stack data flow',
-      'Personal R&D project',
-    ],
+    features: ['React front end', 'Node.js backend', 'Full-stack data flow', 'Personal R&D project'],
     stack: ['React.js', 'Node.js', 'JavaScript'],
     link: {
       href: 'https://github.com/MohitParmarCoder/pixelnova-studios',
@@ -405,6 +532,7 @@ export const projects: Project[] = [
     title: 'Personal Portfolio Website',
     icon: '🌐',
     category: 'Personal',
+    domain: 'Personal R&D',
     blurb:
       'This site — a static React and TypeScript single page application, built with Vite and deployed to GitHub Pages through GitHub Actions.',
     features: [
@@ -542,9 +670,9 @@ export const navLinks = [
   { id: 'home', label: 'Home' },
   { id: 'about', label: 'About' },
   { id: 'experience', label: 'Experience' },
+  { id: 'industries', label: 'Industries' },
   { id: 'skills', label: 'Skills' },
   { id: 'projects', label: 'Projects' },
   { id: 'timeline', label: 'Timeline' },
-  { id: 'services', label: 'Services' },
   { id: 'contact', label: 'Contact' },
 ] as const;

@@ -8,7 +8,7 @@ export default function Services() {
         <Reveal className="section-head">
           <span className="eyebrow">What I do</span>
           <h2 className="section-title">
-            Where I add <span className="gradient-text">the most value</span>
+            Where I add <em>the most value</em>
           </h2>
         </Reveal>
 
