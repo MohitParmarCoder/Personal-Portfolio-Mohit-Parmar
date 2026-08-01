@@ -22,7 +22,6 @@ Features:
 - Filterable project cards tagged by industry, with a cursor-tracking hover glow
 - Scroll-reveal animations and animated counters built on `IntersectionObserver` (no animation
   library)
-- Live GitHub profile counters from the public API, degrading gracefully when unavailable
 - Downloadable résumé, generated social preview card and `Person` structured data for search
 - Fully responsive, with `prefers-reduced-motion` respected throughout
 
@@ -71,7 +70,7 @@ BASE_PATH=/ npm run build
 ## Editing the content
 
 All copy lives in [`src/data/content.ts`](src/data/content.ts): profile details, experience,
-skills, projects, timeline, services and contact channels. Editing that one file changes the whole
+skills, projects, industries, services and contact channels. Editing that one file changes the whole
 site — no component changes required.
 
 The downloadable résumé is [`public/Mohit_Parmar_Resume.pdf`](public/Mohit_Parmar_Resume.pdf).
@@ -105,7 +104,7 @@ Team or Enterprise). A private repository on a free account cannot serve Pages a
 ├── src/
 │   ├── components/                One component per section
 │   ├── data/content.ts            All site content
-│   ├── hooks.ts                   Reveal, active section, theme, counters, GitHub stats
+│   ├── hooks.ts                   Reveal, active section, theme, counters, typewriter
 │   ├── utils.ts                   Base-path-aware asset URLs
 │   ├── styles.css                 Design tokens and all styling
 │   ├── App.tsx

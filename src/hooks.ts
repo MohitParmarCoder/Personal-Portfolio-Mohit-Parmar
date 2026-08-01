@@ -139,52 +139,6 @@ export function useTypewriter(phrases: readonly string[], speed = 65, pause = 19
   return text;
 }
 
-export type GitHubStats = {
-  repos: number;
-  followers: number;
-  following: number;
-  memberSince: string;
-};
-
-/**
- * Reads public profile counters from the unauthenticated GitHub API.
- * Returns null when the request fails (rate limit, offline, blocked network)
- * so the UI can fall back to a static panel rather than showing an error.
- */
-export function useGitHubStats(username: string) {
-  const [stats, setStats] = useState<GitHubStats | null>(null);
-  const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
-
-  useEffect(() => {
-    let cancelled = false;
-
-    fetch(`https://api.github.com/users/${username}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`GitHub responded ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        if (cancelled) return;
-        setStats({
-          repos: data.public_repos ?? 0,
-          followers: data.followers ?? 0,
-          following: data.following ?? 0,
-          memberSince: data.created_at ? new Date(data.created_at).getFullYear().toString() : '—',
-        });
-        setState('ready');
-      })
-      .catch(() => {
-        if (!cancelled) setState('error');
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [username]);
-
-  return { stats, state };
-}
-
 /** Counts up to `target` once the element is on screen. */
 export function useCountUp(target: number, duration = 1400) {
   const [value, setValue] = useState(0);
