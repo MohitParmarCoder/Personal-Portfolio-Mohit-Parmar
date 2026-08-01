@@ -10,26 +10,29 @@ TypeScript · AWS) based in Ahmedabad, India.
 A static single page application — no backend, no database, no tracking. It is built with React 18,
 TypeScript and Vite, bundled to plain HTML, CSS and JavaScript and served from GitHub Pages.
 
-Sections: Home, About, Impact, Experience, Industries, Skills, Tech Stack, Projects, Timeline,
-Services, GitHub activity, Résumé and Contact.
+Sections: Home, About, Experience, Projects, Skills and Contact — six, each covering one thing.
+An earlier cut had twelve, and the products, domains and capabilities were each restated three
+times over; impact figures now sit inside Experience, domains are tags on the project cards, and
+the résumé download sits with the other contact routes.
 
 Features:
 
 - Dark theme by default with a light theme toggle, remembered in `localStorage`
-- **Impact metrics** — measured outcomes, every figure quoted from the CV rather than estimated
-- **Industry breadth** — the ten domains the work spans, each with what was built in it
-- Per-role metric strips on every experience entry
-- Filterable project cards tagged by domain, with a cursor-tracking hover glow
+- **Impact figures** inside Experience — every number quoted from the CV rather than estimated
+- Filterable project cards tagged by industry, with a cursor-tracking hover glow
 - Scroll-reveal animations and animated counters built on `IntersectionObserver` (no animation
   library)
-- Live GitHub profile counters from the public API, degrading gracefully when unavailable
 - Downloadable résumé, generated social preview card and `Person` structured data for search
 - Fully responsive, with `prefers-reduced-motion` respected throughout
 
 ### Design
 
-Charcoal ground with a warm bias and a single amber accent, so the accent always carries meaning.
-Type is Fraunces (display), Archivo (UI and body) and JetBrains Mono for figures and labels.
+Deep navy ground with an indigo → cyan gradient used only on headline words and primary actions.
+Type is Space Grotesk for headings and Inter for everything else.
+
+Every text token clears WCAG AA (4.5:1) in both themes. Filled surfaces that carry white text use
+a separate indigo → violet ramp — the display gradient runs into cyan, where white drops to
+1.81:1.
 
 Client and product names are deliberately generalised throughout the site. Commercial work is
 described by capability rather than by customer, in line with contractual confidentiality.
@@ -67,7 +70,7 @@ BASE_PATH=/ npm run build
 ## Editing the content
 
 All copy lives in [`src/data/content.ts`](src/data/content.ts): profile details, experience,
-skills, projects, timeline, services and contact channels. Editing that one file changes the whole
+skills, projects, industries, services and contact channels. Editing that one file changes the whole
 site — no component changes required.
 
 The downloadable résumé is [`public/Mohit_Parmar_Resume.pdf`](public/Mohit_Parmar_Resume.pdf).
@@ -93,6 +96,7 @@ Team or Enterprise). A private repository on a free account cannot serve Pages a
 ├── public/
 │   ├── Mohit_Parmar_Resume.pdf    Downloadable résumé
 │   ├── profile.jpg                Portrait used in the hero and nav
+│   ├── profile-portrait.jpg       4:5 crop for tall frames
 │   ├── og-image.jpg               Social preview card (1200×630)
 │   ├── favicon.png                Site icon, cropped from the portrait
 │   ├── apple-touch-icon.png
@@ -100,7 +104,7 @@ Team or Enterprise). A private repository on a free account cannot serve Pages a
 ├── src/
 │   ├── components/                One component per section
 │   ├── data/content.ts            All site content
-│   ├── hooks.ts                   Reveal, active section, theme, counters, GitHub stats
+│   ├── hooks.ts                   Reveal, active section, theme, counters, typewriter
 │   ├── utils.ts                   Base-path-aware asset URLs
 │   ├── styles.css                 Design tokens and all styling
 │   ├── App.tsx

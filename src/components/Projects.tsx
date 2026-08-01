@@ -16,14 +16,14 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
   return (
     <article
-      className="card project"
+      className="panel project"
       onMouseMove={onMove}
-      style={{ animationDelay: `${Math.min(index, 8) * 55}ms` }}
+      style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
     >
       <div className="project__top">
-        <div className="project__icon" aria-hidden>
+        <span className="project__icon" aria-hidden>
           {project.icon}
-        </div>
+        </span>
         <span className="project__domain">{project.domain}</span>
       </div>
 
@@ -37,13 +37,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         </p>
       )}
 
-      <ul className="project__features">
-        {project.features.map((feature) => (
-          <li key={feature}>{feature}</li>
-        ))}
-      </ul>
-
-      <div className="chip-row">
+      <div className="chip-row project__stack">
         {project.stack.map((tech) => (
           <span className="chip" key={tech}>
             {tech}
@@ -53,19 +47,24 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
       <div className="project__foot">
         <span className={`project__status ${project.status ? 'project__status--wip' : ''}`}>
-          ● {project.status ?? 'Delivered'}
+          {project.status ?? 'Delivered'}
         </span>
 
-        {project.link && (
-          <a
-            className="project__link"
-            href={project.link.href}
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            {project.link.label}
-            <IconArrow size={14} />
-          </a>
+        {project.links && (
+          <span className="project__links">
+            {project.links.map((link) => (
+              <a
+                key={link.href}
+                className="project__link"
+                href={link.href}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {link.label}
+                <IconArrow size={13} />
+              </a>
+            ))}
+          </span>
         )}
       </div>
     </article>
@@ -81,31 +80,35 @@ export default function Projects() {
   );
 
   return (
-    <section id="projects" className="section">
+    <section id="projects" className="section section--tint">
       <div className="container">
         <Reveal className="section-head">
-          <span className="eyebrow">Projects</span>
+          <span className="eyebrow">Work</span>
           <h2 className="section-title">
-            Selected <em>work</em>
+            Selected <em>projects</em>
           </h2>
           <p className="section-sub">
-            Client and product names are withheld under contract. Each entry describes what the
-            system does, the domain it serves and what it was built with.
+            Each card is one system — what it does, the industry it serves, and what it was built
+            with.
           </p>
         </Reveal>
 
-        <Reveal className="filters">
-          {categories.map((category) => (
-            <button
-              key={category}
-              type="button"
-              className={`filter ${filter === category ? 'is-active' : ''}`}
-              onClick={() => setFilter(category)}
-              aria-pressed={filter === category}
-            >
-              {category}
-            </button>
-          ))}
+        <Reveal>
+          {/* Toggle buttons rather than tabs: they filter one grid in place,
+              they do not swap between panels. */}
+          <div className="filters" role="group" aria-label="Filter projects by type">
+            {categories.map((category) => (
+              <button
+                key={category}
+                type="button"
+                className={`filter ${filter === category ? 'is-active' : ''}`}
+                onClick={() => setFilter(category)}
+                aria-pressed={filter === category}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </Reveal>
 
         <div className="projects__grid">

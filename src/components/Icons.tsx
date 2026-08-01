@@ -44,6 +44,14 @@ export const IconLinkedIn = ({ size = 20 }: IconProps) => (
   </svg>
 );
 
+export const IconInstagram = ({ size = 20 }: IconProps) => (
+  <svg {...base(size)}>
+    <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none" />
+  </svg>
+);
+
 export const IconDownload = ({ size = 18 }: IconProps) => (
   <svg {...base(size)}>
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

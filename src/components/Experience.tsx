@@ -1,6 +1,11 @@
-import { experience } from '../data/content';
+import { experience, impact } from '../data/content';
 import Reveal from './Reveal';
 
+/**
+ * The impact figures live here rather than in a section of their own — they are
+ * the outcome of this work, and separating them meant reading the same numbers
+ * twice. Products are described once, on the project cards.
+ */
 export default function Experience() {
   return (
     <section id="experience" className="section section--tint">
@@ -8,18 +13,31 @@ export default function Experience() {
         <Reveal className="section-head">
           <span className="eyebrow">Experience</span>
           <h2 className="section-title">
-            Nearly five years of <em>shipping production software</em>
+            Nearly five years <em>shipping to production</em>
           </h2>
           <p className="section-sub">
-            Product names and clients are generalised — the work below is described by capability
-            rather than by customer, in line with contractual confidentiality.
+            Client and product names are generalised — the work is described by capability rather
+            than by customer, in line with contractual confidentiality.
           </p>
         </Reveal>
 
+        <div className="impact">
+          {impact.map((item, index) => (
+            <Reveal key={item.label} delay={index * 50}>
+              <div className="impact__item">
+                <div className="impact__value">{item.value}</div>
+                <div className="impact__label">{item.label}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <p className="impact__note">Figures as reported in delivery reviews, 2021–2025</p>
+
         <div className="exp">
           {experience.map((job, index) => (
-            <Reveal key={job.company} delay={index * 90}>
-              <article className="card exp__card">
+            <Reveal key={job.company} delay={index * 80}>
+              <article className="panel exp__card">
                 <header className="exp__head">
                   <div>
                     <h3 className="exp__role">{job.role}</h3>
@@ -36,30 +54,6 @@ export default function Experience() {
 
                 <p className="exp__summary">{job.summary}</p>
 
-                <div className="exp__metrics">
-                  {job.metrics.map((metric) => (
-                    <div className="exp__metric" key={metric.label}>
-                      <b>{metric.value}</b>
-                      <span>{metric.label}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <h4 className="exp__label">Products worked on</h4>
-                <div className="exp__products">
-                  {job.products.map((product) => (
-                    <div className="product" key={product.name}>
-                      <h4>{product.name}</h4>
-                      <ul>
-                        {product.points.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-
-                <h4 className="exp__label">What I was responsible for</h4>
                 <ul className="exp__resp">
                   {job.responsibilities.map((item) => (
                     <li key={item}>{item}</li>

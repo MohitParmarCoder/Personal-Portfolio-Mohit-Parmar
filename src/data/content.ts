@@ -21,6 +21,8 @@ export const profile = {
   phone: '+91 9724787742',
   phoneHref: '+919724787742',
   github: 'https://github.com/MohitParmarCoder',
+  instagram: 'https://www.instagram.com/mohitparmar_official',
+  instagramHandle: 'mohitparmar_official',
   githubUser: 'MohitParmarCoder',
   linkedin: 'https://www.linkedin.com/in/mohitparmar9868',
   linkedinHandle: 'mohitparmar9868',
@@ -390,7 +392,7 @@ export type Project = {
   features: string[];
   stack: string[];
   status?: string;
-  link?: { href: string; label: string };
+  links?: { href: string; label: string }[];
 };
 
 export const projects: Project[] = [
@@ -525,10 +527,10 @@ export const projects: Project[] = [
       'A full-stack JavaScript project I built to explore end-to-end React and Node application structure outside of client work.',
     features: ['React front end', 'Node.js backend', 'Full-stack data flow', 'Personal R&D project'],
     stack: ['React.js', 'Node.js', 'JavaScript'],
-    link: {
-      href: 'https://github.com/MohitParmarCoder/pixelnova-studios',
-      label: 'View on GitHub',
-    },
+    links: [
+      { href: 'https://mohitparmarcoder.github.io/pixelnova-studios/', label: 'Live site' },
+      { href: 'https://github.com/MohitParmarCoder/pixelnova-studios', label: 'Source' },
+    ],
   },
   {
     title: 'Personal Portfolio Website',
@@ -544,53 +546,12 @@ export const projects: Project[] = [
       'Automated deployment pipeline',
     ],
     stack: ['React.js', 'TypeScript', 'Vite', 'GitHub Actions'],
-    link: {
-      href: 'https://github.com/MohitParmarCoder/Personal-Portfolio-Mohit-Parmar',
-      label: 'View source',
-    },
+    links: [
+      { href: 'https://github.com/MohitParmarCoder/Personal-Portfolio-Mohit-Parmar', label: 'Source' },
+    ],
   },
 ];
 
-export type TimelineEntry = {
-  period: string;
-  title: string;
-  place: string;
-  detail: string;
-  kind: 'work' | 'education';
-};
-
-export const timeline: TimelineEntry[] = [
-  {
-    period: 'Aug 2025 — Present',
-    title: 'Full Stack Developer',
-    place: 'Enqcode Technologies Pvt. Ltd.',
-    detail:
-      'Lead management, insurance claim processing and a real-time cryptocurrency trading platform. Mentoring developers and running code reviews.',
-    kind: 'work',
-  },
-  {
-    period: 'Aug 2021 — Jul 2025',
-    title: 'Full Stack Developer',
-    place: 'Karvish Enterprise Pvt. Ltd.',
-    detail:
-      'HRMS, e-recruitment, CRM and compliance products, plus a no-code application builder used to spin up business applications quickly.',
-    kind: 'work',
-  },
-  {
-    period: '2021 — 2023',
-    title: 'Master of Computer Applications (MCA)',
-    place: 'Gujarat Technological University, Ahmedabad',
-    detail: 'CGPA 8.0',
-    kind: 'education',
-  },
-  {
-    period: '2018 — 2021',
-    title: 'Bachelor of Computer Applications (BCA)',
-    place: 'Gujarat University, Ahmedabad',
-    detail: 'CGPA 7.5',
-    kind: 'education',
-  },
-];
 
 export const education = [
   {
@@ -655,26 +616,10 @@ export const services = [
   },
 ];
 
-export const whyHireMe = [
-  'Nearly 5 years of professional experience',
-  'Full stack expertise across the whole delivery path',
-  'Enterprise application development',
-  'Scalable architecture design',
-  'Performance optimisation',
-  'Team collaboration and mentoring',
-  'Strong problem solving',
-  'AI-driven development workflow',
-  'Product mindset, not just ticket delivery',
-  'Clean code and engineering best practices',
-];
-
 export const navLinks = [
-  { id: 'home', label: 'Home' },
   { id: 'about', label: 'About' },
   { id: 'experience', label: 'Experience' },
-  { id: 'industries', label: 'Industries' },
+  { id: 'projects', label: 'Work' },
   { id: 'skills', label: 'Skills' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'timeline', label: 'Timeline' },
   { id: 'contact', label: 'Contact' },
 ] as const;
