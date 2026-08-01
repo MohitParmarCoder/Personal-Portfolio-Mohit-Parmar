@@ -31,8 +31,8 @@ export default function Hero() {
   return (
     <section id="home" className="hero">
       <div className="container">
-        <div className="hero__grid">
-          <div>
+        <div className="hero__bento">
+          <div className="tile">
             <div className="hero__badge">
               <span className="hero__pulse" />
               {profile.availability}
@@ -100,22 +100,22 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="hero__portrait">
-            <span className="hero__ring" aria-hidden />
+          <div className="tile hero__portrait">
             <img
               className="hero__photo"
-              src={asset(profile.photo)}
-              width={760}
-              height={760}
+              src={asset(profile.portrait)}
+              width={880}
+              height={1100}
               alt="Mohit Parmar"
               fetchPriority="high"
             />
-            <span className="hero__tagpill hero__tagpill--a">
-              <b>5</b> yrs experience
-            </span>
-            <span className="hero__tagpill hero__tagpill--b">
-              <b>10</b> industries
-            </span>
+            <div className="hero__portrait-caption">
+              <div>
+                <b>{profile.name}</b>
+                <span>{profile.location}</span>
+              </div>
+              <span className="hero__available">Available</span>
+            </div>
           </div>
         </div>
 
