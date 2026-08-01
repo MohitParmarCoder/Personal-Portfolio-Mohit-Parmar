@@ -18,7 +18,11 @@
 
   --amber: #efa53c;
   --amber-soft: #f7c877;
-  --amber-deep: #a9660b;
+  /* Dark enough that --accent-text clears WCAG AA (4.5:1) on the light ground. */
+  --amber-deep: #9c5e0a;
+  /* Foreground for anything painted directly with --amber. The amber fill is
+     the same in both themes, so this token is deliberately theme-independent. */
+  --on-amber: #1a1206;
 
   --radius-sm: 8px;
   --radius: 14px;
@@ -40,10 +44,9 @@
   --border-strong: rgba(255, 246, 232, 0.2);
   --text: #f3efe9;
   --text-muted: #a49c92;
-  --text-faint: #746c63;
+  --text-faint: #8b837a;
   --accent: var(--amber);
   --accent-text: var(--amber);
-  --on-accent: #1a1206;
   --shadow: 0 26px 64px -24px rgba(0, 0, 0, 0.9);
   --glow: rgba(239, 165, 60, 0.16);
   --grid-line: rgba(255, 246, 232, 0.028);
@@ -59,10 +62,9 @@
   --border-strong: rgba(28, 22, 12, 0.26);
   --text: #17140f;
   --text-muted: #5c5449;
-  --text-faint: #837a6d;
+  --text-faint: #6b6459;
   --accent: var(--amber-deep);
   --accent-text: var(--amber-deep);
-  --on-accent: #fffdf8;
   --shadow: 0 24px 54px -26px rgba(60, 45, 20, 0.34);
   --glow: rgba(239, 165, 60, 0.22);
   --grid-line: rgba(28, 22, 12, 0.045);
@@ -148,7 +150,7 @@ svg {
 
 ::selection {
   background: var(--amber);
-  color: #1a1206;
+  color: var(--on-amber);
 }
 
 /* ==========================================================================
@@ -286,7 +288,7 @@ svg {
 
 .btn--primary {
   background: var(--amber);
-  color: #1a1206;
+  color: var(--on-amber);
   box-shadow: 0 12px 30px -12px var(--glow);
 }
 
@@ -517,6 +519,11 @@ svg {
 .nav__mobile {
   position: fixed;
   inset: var(--nav-height) 0 auto 0;
+  /* Body scroll is locked while the menu is open, so on a short viewport (a
+     phone in landscape) the last links would otherwise be unreachable. */
+  max-height: calc(100svh - var(--nav-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: color-mix(in srgb, var(--bg) 97%, transparent);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
@@ -544,7 +551,7 @@ svg {
 }
 
 .nav__mobile a.btn--primary {
-  color: #1a1206;
+  color: var(--on-amber);
   border-bottom: 0;
   margin-top: 18px;
   padding: 14px 28px;
@@ -894,7 +901,7 @@ svg {
   background: var(--amber);
   display: grid;
   place-items: center;
-  color: #1a1206;
+  color: var(--on-amber);
   font-size: 0.58rem;
   font-weight: 700;
 }
@@ -1210,11 +1217,20 @@ svg {
   flex-shrink: 0;
 }
 
-.industry h3 {
+/* Card headings read as UI, not editorial display type — they opt out of the
+   Fraunces stack the global h3 rule applies. */
+.industry h3,
+.skill-card h3,
+.project h3,
+.tl-title,
+.service h3 {
   font-family: var(--font-sans);
-  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0;
+}
+
+.industry h3 {
+  font-size: 1rem;
 }
 
 .industry p {
@@ -1262,10 +1278,7 @@ svg {
 }
 
 .skill-card h3 {
-  font-family: var(--font-sans);
   font-size: 1.02rem;
-  font-weight: 600;
-  letter-spacing: 0;
   margin-bottom: 14px;
 }
 
@@ -1338,7 +1351,7 @@ svg {
 
 .filter.is-active {
   background: var(--amber);
-  color: #1a1206;
+  color: var(--on-amber);
   border-color: transparent;
 }
 
@@ -1408,10 +1421,7 @@ svg {
 }
 
 .project h3 {
-  font-family: var(--font-sans);
   font-size: 1.08rem;
-  font-weight: 600;
-  letter-spacing: 0;
   margin-bottom: 10px;
 }
 
@@ -1489,7 +1499,7 @@ svg {
 }
 
 .project__status--wip {
-  color: var(--amber);
+  color: var(--accent-text);
 }
 
 .project__link {
@@ -1561,10 +1571,7 @@ svg {
 }
 
 .tl-title {
-  font-family: var(--font-sans);
   font-size: 1.08rem;
-  font-weight: 600;
-  letter-spacing: 0;
   margin: 8px 0 4px;
 }
 
@@ -1595,10 +1602,7 @@ svg {
 }
 
 .service h3 {
-  font-family: var(--font-sans);
   font-size: 0.99rem;
-  font-weight: 600;
-  letter-spacing: 0;
   margin-bottom: 9px;
 }
 
@@ -1758,7 +1762,7 @@ svg {
 
 .contact-card:hover .contact-card__icon {
   background: var(--amber);
-  color: #1a1206;
+  color: var(--on-amber);
 }
 
 .contact-card__label {
@@ -1773,7 +1777,7 @@ svg {
 .contact-card__value {
   font-weight: 600;
   font-size: 0.92rem;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .contact__cta {
@@ -1837,7 +1841,7 @@ svg {
 
 .to-top:hover {
   background: var(--amber);
-  color: #1a1206;
+  color: var(--on-amber);
   border-color: transparent;
 }
 
