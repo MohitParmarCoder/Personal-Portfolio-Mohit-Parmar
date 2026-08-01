@@ -10,18 +10,26 @@ TypeScript · AWS) based in Ahmedabad, India.
 A static single page application — no backend, no database, no tracking. It is built with React 18,
 TypeScript and Vite, bundled to plain HTML, CSS and JavaScript and served from GitHub Pages.
 
-Sections: Home, About, Experience, Skills, Tech Stack, Projects, Timeline, Services, GitHub
-activity, Résumé and Contact.
+Sections: Home, About, Impact, Experience, Industries, Skills, Tech Stack, Projects, Timeline,
+Services, GitHub activity, Résumé and Contact.
 
 Features:
 
 - Dark theme by default with a light theme toggle, remembered in `localStorage`
+- **Impact metrics** — measured outcomes, every figure quoted from the CV rather than estimated
+- **Industry breadth** — the ten domains the work spans, each with what was built in it
+- Per-role metric strips on every experience entry
+- Filterable project cards tagged by domain, with a cursor-tracking hover glow
 - Scroll-reveal animations and animated counters built on `IntersectionObserver` (no animation
   library)
-- Filterable project cards with a cursor-tracking hover glow
 - Live GitHub profile counters from the public API, degrading gracefully when unavailable
-- Downloadable résumé
+- Downloadable résumé, generated social preview card and `Person` structured data for search
 - Fully responsive, with `prefers-reduced-motion` respected throughout
+
+### Design
+
+Charcoal ground with a warm bias and a single amber accent, so the accent always carries meaning.
+Type is Fraunces (display), Archivo (UI and body) and JetBrains Mono for figures and labels.
 
 Client and product names are deliberately generalised throughout the site. Commercial work is
 described by capability rather than by customer, in line with contractual confidentiality.
@@ -84,7 +92,11 @@ Team or Enterprise). A private repository on a free account cannot serve Pages a
 ├── .github/workflows/deploy.yml   Build and deploy to GitHub Pages
 ├── public/
 │   ├── Mohit_Parmar_Resume.pdf    Downloadable résumé
-│   └── favicon.svg
+│   ├── profile.jpg                Portrait used in the hero and nav
+│   ├── og-image.jpg               Social preview card (1200×630)
+│   ├── favicon.png                Site icon, cropped from the portrait
+│   ├── apple-touch-icon.png
+│   └── favicon.svg                Monochrome mask icon
 ├── src/
 │   ├── components/                One component per section
 │   ├── data/content.ts            All site content
@@ -100,5 +112,5 @@ Team or Enterprise). A private repository on a free account cannot serve Pages a
 ## Contact
 
 - Email: mohitparmar9868@gmail.com
-- LinkedIn: [mohit-parmar-729717185](https://www.linkedin.com/in/mohit-parmar-729717185)
+- LinkedIn: [mohitparmar9868](https://www.linkedin.com/in/mohitparmar9868)
 - GitHub: [@MohitParmarCoder](https://github.com/MohitParmarCoder)

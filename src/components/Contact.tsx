@@ -19,7 +19,7 @@ const channels = [
   },
   {
     label: 'LinkedIn',
-    value: 'mohit-parmar-729717185',
+    value: `in/${profile.linkedinHandle}`,
     href: profile.linkedin,
     icon: <IconLinkedIn size={19} />,
     external: true,
@@ -47,7 +47,7 @@ export default function Contact() {
         <Reveal className="section-head section-head--center">
           <span className="eyebrow">Contact</span>
           <h2 className="section-title">
-            Let&apos;s build <span className="gradient-text">something solid</span>
+            Let&apos;s build <em>something solid</em>
           </h2>
           <p className="section-sub">
             Open to senior full stack roles and interesting product work. The quickest route is

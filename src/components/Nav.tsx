@@ -30,8 +30,8 @@ export default function Nav() {
     <header className={`nav ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="container nav__inner">
         <a href="#home" className="nav__brand" onClick={() => setOpen(false)}>
-          <span className="nav__mark">MP</span>
-          <span>Mohit Parmar</span>
+          <img className="nav__avatar" src={asset(profile.photo)} alt="" width={36} height={36} />
+          <span>{profile.name}</span>
         </a>
 
         <nav className="nav__links" aria-label="Primary">

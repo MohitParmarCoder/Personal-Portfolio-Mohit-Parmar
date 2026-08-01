@@ -1,9 +1,9 @@
 import { useMemo, useState, type MouseEvent } from 'react';
 import { projects, type Project } from '../data/content';
-import { IconArrow } from './Icons';
+import { IconArrow, IconTrend } from './Icons';
 import Reveal from './Reveal';
 
-const categories = ['All', 'Fintech', 'Enterprise', 'CRM', 'Platform', 'Personal'] as const;
+const categories = ['All', 'Fintech', 'Enterprise', 'Platform', 'CRM', 'Personal'] as const;
 type Category = (typeof categories)[number];
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
@@ -24,11 +24,18 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         <div className="project__icon" aria-hidden>
           {project.icon}
         </div>
-        <span className="project__tag">{project.category}</span>
+        <span className="project__domain">{project.domain}</span>
       </div>
 
       <h3>{project.title}</h3>
       <p className="project__blurb">{project.blurb}</p>
+
+      {project.impact && (
+        <p className="project__impact">
+          <IconTrend size={15} />
+          {project.impact}
+        </p>
+      )}
 
       <ul className="project__features">
         {project.features.map((feature) => (
@@ -45,13 +52,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       </div>
 
       <div className="project__foot">
-        {project.status ? (
-          <span className="project__status">● {project.status}</span>
-        ) : (
-          <span className="project__status" style={{ color: 'var(--text-faint)' }}>
-            ● Delivered
-          </span>
-        )}
+        <span className={`project__status ${project.status ? 'project__status--wip' : ''}`}>
+          ● {project.status ?? 'Delivered'}
+        </span>
 
         {project.link && (
           <a
@@ -83,11 +86,11 @@ export default function Projects() {
         <Reveal className="section-head">
           <span className="eyebrow">Projects</span>
           <h2 className="section-title">
-            Selected <span className="gradient-text">work</span>
+            Selected <em>work</em>
           </h2>
           <p className="section-sub">
             Client and product names are withheld under contract. Each entry describes what the
-            system does and what it was built with.
+            system does, the domain it serves and what it was built with.
           </p>
         </Reveal>
 

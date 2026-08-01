@@ -28,7 +28,7 @@ export default function Skills() {
         <Reveal className="section-head">
           <span className="eyebrow">Skills</span>
           <h2 className="section-title">
-            The <span className="gradient-text">toolkit</span> I build with
+            The <em>toolkit</em> I build with
           </h2>
           <p className="section-sub">
             Full stack across the whole delivery path — interface, API, data layer, cloud and the

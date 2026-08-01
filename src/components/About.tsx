@@ -8,7 +8,7 @@ export default function About() {
         <Reveal className="section-head">
           <span className="eyebrow">About me</span>
           <h2 className="section-title">
-            Engineering that <span className="gradient-text">solves the business problem</span>
+            Engineering that <em>solves the business problem</em>
           </h2>
         </Reveal>
 
