@@ -1,8 +1,12 @@
 name: Deploy to GitHub Pages
 
+# The push trigger is deliberately commented out: the site is meant to stay
+# unpublished, and an automatic deploy on every merge would put it back. Run
+# the workflow by hand from the Actions tab to publish again, or restore the
+# push trigger to go back to deploying on merge.
 on:
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
   workflow_dispatch:
 
 # Allow the workflow to publish to Pages via OIDC.

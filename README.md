@@ -3,7 +3,9 @@
 Personal portfolio website of **Mohit Parmar**, Senior Full Stack Developer (React.js · Node.js ·
 TypeScript · AWS) based in Ahmedabad, India.
 
-**Live site:** https://mohitparmarcoder.github.io/Personal-Portfolio-Mohit-Parmar/
+**Status:** not currently published. Automatic deployment is switched off — see
+[Deployment](#deployment). When published, the site serves from
+https://mohitparmarcoder.github.io/Personal-Portfolio-Mohit-Parmar/
 
 ## About the site
 
@@ -78,8 +80,13 @@ Replace the file, keeping the name, to publish a new version.
 
 ## Deployment
 
-`.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to
-`main`, and can also be run manually from the Actions tab.
+`.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages. **Automatic
+deployment is currently switched off** — the `push` trigger is commented out so that merging to
+`main` no longer republishes the site. The workflow still runs on demand from the Actions tab.
+
+Turning the workflow off does not remove a site that is already published. To take the live site
+down, unpublish it in **Settings → Pages → Unpublish site**. To publish again, restore the `push`
+trigger or run the workflow manually.
 
 **One-time setup:** in **Settings → Pages**, set **Source** to **GitHub Actions**. Until that is
 done, `actions/configure-pages` fails with `Get Pages site failed ... Not Found`. The workflow
