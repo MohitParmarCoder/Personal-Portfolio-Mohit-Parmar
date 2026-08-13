@@ -78,17 +78,36 @@ export function useScrolledPast(offset: number) {
 
 export type Theme = 'dark' | 'light';
 
+/** Shared with the inline theme script in index.html — keep the two in step. */
 const THEME_KEY = 'mp-portfolio-theme';
+const BG = { dark: '#070a16', light: '#f7f8fd' } as const;
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    const stored = window.localStorage.getItem(THEME_KEY);
-    return stored === 'light' || stored === 'dark' ? stored : 'dark';
+    // index.html already resolved this before the first paint: a saved choice
+    // if there is one, otherwise dark on desktop and light on mobile. Reading
+    // it back off the element keeps a single source of truth.
+    const applied = typeof document === 'undefined' ? null : document.documentElement.dataset.theme;
+    return applied === 'light' || applied === 'dark' ? applied : 'dark';
   });
+
+  const chosen = useRef(false);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
+    // Without this a light phone gets a navy status bar, and vice versa.
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', BG[theme]);
+
+    // Only a toggle is worth saving. Storing the device default would pin it
+    // for good, so a laptop that first loaded in a narrow window could never
+    // go back to dark on its own.
+    if (!chosen.current) {
+      chosen.current = true;
+      return;
+    }
+
     try {
       window.localStorage.setItem(THEME_KEY, theme);
     } catch {
