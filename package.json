@@ -6,7 +6,7 @@
   "description": "Personal portfolio website of Mohit Parmar, Senior Full Stack Developer",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/build-blog.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
@@ -19,6 +19,8 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.0.9",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
   }
