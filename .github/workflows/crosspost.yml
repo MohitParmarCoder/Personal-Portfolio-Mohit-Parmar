@@ -44,12 +44,15 @@ jobs:
       # [skip ci] keeps this bookkeeping commit from triggering a deploy.
       - name: Save cross-post state
         run: |
-          if git diff --quiet .crosspost.json 2>/dev/null && [ -f .crosspost.json ]; then
-            echo "state unchanged"
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .crosspost.json
-          git commit -m "Record cross-posted article IDs [skip ci]" || exit 0
+          # Staged, so a newly created file counts as a change: `git diff` alone
+          # ignores untracked files and would report "unchanged" for a state
+          # file that has never been committed, which is every first run.
+          if git diff --cached --quiet -- .crosspost.json; then
+            echo "state unchanged"
+            exit 0
+          fi
+          git commit -m "Record cross-posted article IDs [skip ci]"
           git push

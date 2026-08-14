@@ -26,6 +26,13 @@ a `trending` post instead.** Inventing a personal anecdote, a bug I never hit, o
 project that does not exist is never acceptable — one fabricated "war story" costs more
 credibility than a hundred good posts earn.
 
+## Where a post ends up
+
+Merging a post to `main` publishes it on the site. Mirroring to dev.to and Hashnode runs
+in the same push, but only once `DEVTO_API_KEY`, `HASHNODE_TOKEN` and
+`HASHNODE_PUBLICATION_ID` exist as repository secrets — until then `crosspost.yml`
+succeeds with a "skipped" log line. That is working as designed, not a failure to chase.
+
 ## Quality bar
 
 - One specific idea per post, 500–900 words
