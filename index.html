@@ -1,10 +1,43 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#070a16" />
+
+    <!-- Resolve the theme before the first paint, otherwise the page renders
+         in one theme and swaps to the other once React mounts. A saved choice
+         always wins; with none, the default is dark on laptops and desktops
+         and light on phones, where the screen is usually read in daylight.
+         900px is the width at which the layout itself turns mobile, so the two
+         switch together. -->
+    <script>
+      (function () {
+        // Keep this key and these colours in step with src/hooks.ts and the
+        // --bg tokens in src/styles.css.
+        var KEY = 'mp-portfolio-theme';
+        var saved = null;
+
+        try {
+          saved = localStorage.getItem(KEY);
+        } catch (e) {
+          // Private browsing can refuse even reads; fall through to the default.
+        }
+
+        var theme =
+          saved === 'light' || saved === 'dark'
+            ? saved
+            : window.matchMedia('(max-width: 900px)').matches
+              ? 'light'
+              : 'dark';
+
+        document.documentElement.dataset.theme = theme;
+
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#f7f8fd' : '#070a16');
+      })();
+    </script>
 
     <title>Mohit Parmar — Senior Full Stack Developer</title>
     <meta

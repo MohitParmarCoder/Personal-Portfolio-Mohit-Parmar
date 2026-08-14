@@ -17,7 +17,11 @@ the résumé download sits with the other contact routes.
 
 Features:
 
-- Dark theme by default with a light theme toggle, remembered in `localStorage`
+- **Theme by device** — dark on laptops and desktops, light on phones, switched at the same 900px
+  width where the layout turns mobile. An inline script in `index.html` resolves it before the
+  first paint, so the page never renders in one theme and swaps to the other. Toggling overrides
+  the default and is remembered in `localStorage`; the default itself is not stored, so a laptop
+  that once loaded in a narrow window still comes back dark when maximised.
 - **Impact figures** inside Experience — every number quoted from the CV rather than estimated
 - Filterable project cards tagged by industry, with a cursor-tracking hover glow
 - Scroll-reveal animations and animated counters built on `IntersectionObserver` (no animation
