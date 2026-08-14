@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { navLinks, profile } from '../data/content';
+import { navLinks, profile, writingLink } from '../data/content';
 import { useActiveSection, useScrolledPast, useTheme } from '../hooks';
 import { asset } from '../utils';
 import { IconClose, IconDownload, IconMenu, IconMoon, IconSun } from './Icons';
@@ -44,6 +44,9 @@ export default function Nav() {
               {link.label}
             </a>
           ))}
+          <a href={asset(writingLink.href)} className="nav__link">
+            {writingLink.label}
+          </a>
         </nav>
 
         <div className="nav__actions">
@@ -85,6 +88,9 @@ export default function Nav() {
               {link.label}
             </a>
           ))}
+          <a href={asset(writingLink.href)} onClick={() => setOpen(false)}>
+            {writingLink.label}
+          </a>
           <a
             className="btn btn--primary"
             href={asset(profile.resume)}
