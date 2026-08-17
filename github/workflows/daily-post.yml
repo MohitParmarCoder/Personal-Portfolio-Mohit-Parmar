@@ -1,0 +1,72 @@
+name: Write the daily post
+
+# Runs entirely inside GitHub Actions: the writing, the validation and the push
+# all happen here, so publishing never depends on an external session or on
+# anyone being at a keyboard. 04:17 UTC rather than the hour mark, because every
+# scheduled workflow on the platform fires at :00 and the queue shows it.
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+# The commit at the end pushes back to main, which is what triggers deploy.yml
+# and crosspost.yml in turn.
+permissions:
+  contents: write
+
+# A manual run started while the scheduled one is mid-flight would race it for
+# the same filename; queue instead.
+concurrency:
+  group: daily-post
+  cancel-in-progress: false
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Draft today's post
+        run: node scripts/write-daily-post.mjs
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Optional repository variables; the script has defaults for both.
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          POST_TZ: ${{ vars.POST_TZ }}
+          # Read-only use: reading the owner's public event feed to decide
+          # whether there is real material for an experience post.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.repository_owner }}
+
+      # The same gate the site is built with. A draft that breaks frontmatter
+      # parsing or the type check fails here, before anything is committed —
+      # broken automation must never reach the live site.
+      - name: Validate by building the site
+        run: npm run build
+
+      - name: Commit and push
+        run: |
+          if [ -z "$(git status --porcelain -- posts content)" ]; then
+            echo "nothing to publish — today's post already existed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add posts content
+          title=$(git diff --cached --name-only -- posts \
+            | head -1 \
+            | xargs -r -I{} sh -c "grep -m1 '^title:' {} | sed \"s/^title: *//; s/^'//; s/'$//\"")
+          git commit -m "Daily post: ${title:-new post}"
+          # Rebase rather than merge: crosspost.yml may have landed its
+          # bookkeeping commit on main while this job was drafting.
+          git pull --rebase origin main
+          git push origin HEAD:main
