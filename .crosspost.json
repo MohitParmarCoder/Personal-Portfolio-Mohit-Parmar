@@ -1,7 +1,11 @@
 {
   "posts": {
-    "github-pages-token-cannot-enable": {},
-    "gradient-button-fails-wcag": {},
+    "github-pages-token-cannot-enable": {
+      "devto": 4427002
+    },
+    "gradient-button-fails-wcag": {
+      "devto": 4427003
+    },
     "theme-flash-react-cannot-fix": {}
   }
 }
