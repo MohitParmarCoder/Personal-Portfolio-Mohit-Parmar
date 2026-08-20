@@ -21,6 +21,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "gray-matter": "^4.0.3",
     "marked": "^18.0.9",
+    "playwright": "^1.62.1",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
   }

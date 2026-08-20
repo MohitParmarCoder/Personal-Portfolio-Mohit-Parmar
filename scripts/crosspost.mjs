@@ -37,6 +37,8 @@ for (const file of files) {
   const { data, content } = matter(raw);
   const slug = data.slug ?? file.replace(/\.md$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '');
   const canonical = `${SITE}writing/${slug}/`;
+  // Absolute: both platforms fetch the cover from the live site.
+  const cover = `${SITE}${data.cover ?? `covers/${slug}.png`}`;
   const record = (state.posts[slug] ??= {});
 
   // The mirror closes with an explicit pointer home — also makes the canonical
@@ -54,6 +56,7 @@ for (const file of files) {
             published: true,
             body_markdown: body,
             canonical_url: canonical,
+            main_image: cover,
             description: data.summary,
             // dev.to caps tags at four and rejects hyphens.
             tags: (data.tags ?? []).slice(0, 4).map((t) => String(t).replaceAll('-', '')),
@@ -85,6 +88,7 @@ for (const file of files) {
               publicationId: HASHNODE_PUBLICATION_ID,
               contentMarkdown: body,
               originalArticleURL: canonical,
+              coverImageOptions: { coverImageURL: cover },
               subtitle: String(data.summary).slice(0, 250),
               tags: [],
             },
