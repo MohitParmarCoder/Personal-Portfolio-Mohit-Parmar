@@ -12,9 +12,11 @@
  *   tags     optional string list
  *   kind     optional: trending | ai-vs-human | challenge | learnings
  *   slug     optional, defaults to the filename without its date prefix
+ *   cover    optional; defaults to covers/<slug>.png when that file exists.
+ *            Generate one with `node scripts/make-cover.mjs <slug>`.
  */
 
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { access, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { marked } from 'marked';
@@ -71,7 +73,16 @@ async function loadPosts() {
         .replace(/^\d{4}-\d{2}-\d{2}-/, '');
     if (!/^[a-z0-9-]+$/.test(slug)) throw new Error(`${file}: slug "${slug}" is not url-safe`);
 
+    // A committed cover wins; otherwise fall back to the shared site card so
+    // social previews are never blank.
+    const coverFile = data.cover ?? `covers/${slug}.png`;
+    const hasCover = await access(path.join(ROOT, 'public', coverFile)).then(
+      () => true,
+      () => false,
+    );
+
     posts.push({
+      cover: hasCover ? coverFile : null,
       slug,
       title: String(data.title),
       date: String(data.date),
@@ -127,9 +138,13 @@ pre code{background:none;padding:0;font-size:.85rem;line-height:1.65}
 article table{border-collapse:collapse;font-size:.92rem;min-width:100%}
 article th,article td{text-align:left;padding:.5rem .8rem;border-bottom:1px solid var(--border)}
 article th{color:var(--text-muted);font-weight:600;white-space:nowrap}
+.hero{width:100%;height:auto;border-radius:14px;border:1px solid var(--border);margin:0 0 2rem;display:block}
+.thumb{width:100%;height:auto;aspect-ratio:1200/630;object-fit:cover;border-radius:10px;border:1px solid var(--border);display:block}
 .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:2.5rem}
 .tag{font-size:.78rem;color:var(--text-muted);border:1px solid var(--border);border-radius:999px;padding:.25rem .7rem}
-.card{display:block;border:1px solid var(--border);background:var(--panel);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;text-decoration:none;color:var(--text)}
+.card{display:grid;grid-template-columns:210px 1fr;gap:1.2rem;align-items:start;border:1px solid var(--border);background:var(--panel);border-radius:14px;padding:1.3rem 1.4rem;margin-bottom:1rem;text-decoration:none;color:var(--text)}
+.card--plain{grid-template-columns:1fr}
+@media(max-width:620px){.card{grid-template-columns:1fr;gap:.9rem}}
 .card:hover{border-color:var(--indigo)}
 .card:focus-visible{outline:2px solid var(--indigo);outline-offset:3px}
 .card h2{margin:0 0 .35rem;font-size:1.2rem}
@@ -144,7 +159,7 @@ const THEME_SCRIPT = `
 (function(){try{var t=localStorage.getItem('mp-portfolio-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}})();
 `;
 
-function shell({ title, description, canonical, body }) {
+function shell({ title, description, canonical, body, image }) {
   return `<!doctype html>
 <html lang="en" data-theme="dark">
 <head>
@@ -160,7 +175,9 @@ function shell({ title, description, canonical, body }) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="${SITE}og-image.jpg">
+<meta property="og:image" content="${image ?? `${SITE}og-image.jpg`}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${image ?? `${SITE}og-image.jpg`}">
 <script>${THEME_SCRIPT}</script>
 <style>${SHELL_CSS}</style>
 </head>
@@ -188,8 +205,10 @@ function postPage(post) {
     title: `${post.title} — Mohit Parmar`,
     description: post.summary,
     canonical: post.url,
+    image: post.cover ? `${SITE}${post.cover}` : undefined,
     body: `
 <article>
+${post.cover ? `<img class="hero" src="${BASE}${post.cover}" alt="" width="1200" height="630">` : ''}
 <h1>${esc(post.title)}</h1>
 <p class="meta">${human(post.date)} · Mohit Parmar</p>
 ${post.html}
@@ -202,10 +221,13 @@ function indexPage(posts) {
   const cards = posts
     .map(
       (p) => `
-<a class="card" href="${BASE}writing/${p.slug}/">
+<a class="card${p.cover ? '' : ' card--plain'}" href="${BASE}writing/${p.slug}/">
+${p.cover ? `<img class="thumb" src="${BASE}${p.cover}" alt="" width="1200" height="630" loading="lazy">` : ''}
+<div>
 <h2>${esc(p.title)}</h2>
 <p class="meta">${human(p.date)}</p>
 <p>${esc(p.summary)}</p>
+</div>
 </a>`,
     )
     .join('\n');

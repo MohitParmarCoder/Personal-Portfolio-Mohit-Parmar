@@ -35,7 +35,10 @@ succeeds with a "skipped" log line. That is working as designed, not a failure t
 
 ## Quality bar
 
-- One specific idea per post, 500–900 words
+- One specific idea per post, 700–1100 words
+- A hook-driven title and a two-sentence pitch as the summary — see `voice.md`
+- The seven-part scenario structure, opening with a bolded TL;DR
 - Concrete artefacts: real commands, real error text, real numbers
-- A takeaway the reader can apply, stated plainly at the end
-- No engagement bait, no "in today's fast-paced world", no emoji walls
+- **A cover image, always** — `node scripts/make-cover.mjs <slug>`, committed with the post
+- At least one code block; a table wherever there is a comparison
+- No engagement bait, no hype words, no emoji walls
