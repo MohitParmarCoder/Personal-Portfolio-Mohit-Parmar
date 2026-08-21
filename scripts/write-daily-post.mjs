@@ -340,25 +340,84 @@ function extractJson(text) {
   return JSON.parse(text.slice(start, end + 1));
 }
 
-async function callGemini(prompt) {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-    {
-      method: 'POST',
-      // The key goes in a header rather than the query string so it cannot leak
-      // into a redirect or an error message that quotes the URL.
-      headers: { 'content-type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-          maxOutputTokens: 8000,
-          temperature: 0.7,
-          responseMimeType: 'application/json',
-        },
-      }),
-    },
+// The key goes in a header rather than the query string throughout, so it
+// cannot leak into a redirect or into an error message that quotes the URL.
+const geminiHeaders = { 'content-type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY };
+
+function geminiGenerate(model, prompt) {
+  return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    method: 'POST',
+    headers: geminiHeaders,
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        maxOutputTokens: 8000,
+        temperature: 0.7,
+        responseMimeType: 'application/json',
+      },
+    }),
+  });
+}
+
+/** Model names this key can actually call, newest-looking first. */
+async function geminiModels() {
+  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', {
+    headers: geminiHeaders,
+  });
+  if (!res.ok) {
+    throw new Error(`gemini list-models ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  }
+  const json = await res.json();
+  return (json.models ?? [])
+    .filter((model) => (model.supportedGenerationMethods ?? []).includes('generateContent'))
+    .map((model) => String(model.name ?? '').replace(/^models\//, ''))
+    .filter(Boolean);
+}
+
+/**
+ * Pick a stand-in for a model name the API no longer serves. Prefers the
+ * highest-numbered plain `flash` — fast, cheapest on the free tier, and ample
+ * for a thousand-word post — and prefers the short name over its dated preview
+ * siblings, which are the ones that get retired.
+ */
+function pickGeminiModel(names) {
+  const version = (name) => Number((name.match(/(\d+(?:\.\d+)?)/) ?? [0, 0])[1]);
+  const general = names.filter(
+    (name) => !/embedding|aqa|image|tts|live|vision|audio|thinking/.test(name),
   );
+  const flash = general.filter((name) => name.includes('flash') && !name.includes('lite'));
+  const pool = flash.length ? flash : general;
+  return pool.sort((a, b) => version(b) - version(a) || a.length - b.length)[0] ?? null;
+}
+
+// Resolved once per process: the fallback costs an extra round trip, and the
+// second and third calls of a run should not each pay it.
+let geminiModel = null;
+
+async function callGemini(prompt) {
+  const wanted = geminiModel ?? GEMINI_MODEL;
+  let res = await geminiGenerate(wanted, prompt);
+
+  // Google retires free-tier model names on its own schedule, so a default that
+  // worked last quarter 404s with the key perfectly valid. Ask the API what it
+  // will serve rather than losing the day's post to a stale string.
+  if (res.status === 404 && geminiModel === null) {
+    const available = await geminiModels();
+    const fallback = pickGeminiModel(available);
+    if (!fallback) {
+      throw new Error(
+        `gemini has no usable model for this key (wanted "${wanted}"); ` +
+          `it offers: ${available.join(', ') || 'nothing'}`,
+      );
+    }
+    console.log(`model "${wanted}" is unavailable — falling back to "${fallback}"`);
+    geminiModel = fallback;
+    res = await geminiGenerate(fallback, prompt);
+  }
+
   if (!res.ok) throw new Error(`gemini ${res.status}: ${(await res.text()).slice(0, 500)}`);
+  geminiModel ??= wanted;
+
   const json = await res.json();
   const text = (json.candidates?.[0]?.content?.parts ?? []).map((part) => part.text ?? '').join('');
   if (!text) throw new Error(`gemini returned no text: ${JSON.stringify(json).slice(0, 300)}`);
