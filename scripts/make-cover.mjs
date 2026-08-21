@@ -93,7 +93,14 @@ const wanted = process.argv[2];
 const files = (await readdir(POSTS)).filter((f) => f.endsWith('.md')).sort();
 await mkdir(OUT, { recursive: true });
 
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+// This sandbox ships a Chromium at a fixed path; a GitHub runner does not, and
+// there `npx playwright install chromium` puts one where Playwright can find it
+// on its own. Use the pinned binary only when it is actually there.
+const PINNED = '/opt/pw-browsers/chromium';
+const launchOptions = (await access(PINNED).then(() => true, () => false))
+  ? { executablePath: PINNED }
+  : {};
+const browser = await chromium.launch(launchOptions);
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 let made = 0;
 

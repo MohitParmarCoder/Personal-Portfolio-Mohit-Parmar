@@ -105,6 +105,36 @@ Editorial ground rules for the automated writer live in [`content/`](content/): 
 calendar and its honesty guardrail (`calendar.md`), the voice guide (`voice.md`), and a notes
 inbox (`notes.md`) for rough material worth turning into a post.
 
+### The daily writer
+
+[`.github/workflows/daily-post.yml`](.github/workflows/daily-post.yml) writes and publishes one
+post a day without anyone present. It runs
+[`scripts/write-daily-post.mjs`](scripts/write-daily-post.mjs), which reads `voice.md` and
+`calendar.md` at run time, gathers material, drafts, validates, renders the cover and pushes to
+`main` — which in turn triggers the deploy and the cross-post.
+
+Two rules are enforced in code rather than in the prompt, because a prompt can be talked out of
+them and a conditional cannot: **the honesty guardrail** (an experience post requires real source
+material, otherwise the format is forced to `trending` before the model is ever asked, and a draft
+that claims one anyway is refused) and **frontmatter assembly** (the model returns JSON; the
+script writes the YAML, so malformed frontmatter is impossible).
+
+Configuration — only the first line is required:
+
+| Secret | Purpose |
+| --- | --- |
+| `GEMINI_API_KEY` | The model. Free tier at [aistudio.google.com](https://aistudio.google.com) is far above one post a day. Without it the job exits with a named error. |
+| `ANTHROPIC_API_KEY` | Optional paid fallback, used only when no Gemini key is set |
+| `GOOGLE_SA_JSON` + `SHEET_ID` | Optional daily work log. A service-account key; share the sheet with the account's email address |
+| `SHEET_CSV_URL` | Alternative to the pair above (File → Share → Publish to web → CSV). Simpler, but the sheet becomes readable by anyone with the link — a poor trade for a log that describes client work |
+
+Optional repository *variables*: `GEMINI_MODEL`, `ANTHROPIC_MODEL`, `POST_TZ`, `SHEET_RANGE`.
+
+Material comes from three places, all optional and all fail-soft: the notes inbox, recent GitHub
+activity for the repository owner, and the work-log sheet. With none of them, the day falls back
+to a trending topic drawn from Hacker News and dev.to. A failed run opens a GitHub issue —
+earlier versions failed silently for four days, which is the bug that behaviour exists to prevent.
+
 ## Deployment
 
 `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages on every push to

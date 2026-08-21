@@ -20,12 +20,15 @@
  * Idempotent: a post already dated today means the job exits 0 having done
  * nothing, so re-runs and retries can never double-post.
  *
- * Env: ANTHROPIC_API_KEY (required), ANTHROPIC_MODEL, GITHUB_TOKEN,
- *      GITHUB_ACTOR, POST_TZ (IANA zone, default UTC).
+ * Env: GEMINI_API_KEY (or ANTHROPIC_API_KEY) required; GEMINI_MODEL,
+ *      ANTHROPIC_MODEL, GITHUB_TOKEN, GITHUB_ACTOR, POST_TZ (IANA zone,
+ *      default UTC), and for the work log either GOOGLE_SA_JSON + SHEET_ID
+ *      (+ SHEET_RANGE) or SHEET_CSV_URL.
  */
 
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { createSign } from 'node:crypto';
 import matter from 'gray-matter';
 
 const ROOT = path.join(import.meta.dirname, '..');
@@ -34,15 +37,29 @@ const CONTENT_DIR = path.join(ROOT, 'content');
 const NOTES_FILE = path.join(CONTENT_DIR, 'notes.md');
 
 const {
+  GEMINI_API_KEY,
+  GEMINI_MODEL = 'gemini-2.0-flash',
   ANTHROPIC_API_KEY,
   ANTHROPIC_MODEL = 'claude-opus-5',
   GITHUB_TOKEN,
   GITHUB_ACTOR = 'MohitParmarCoder',
+  GOOGLE_SA_JSON,
+  SHEET_ID,
+  SHEET_RANGE = 'A:Z',
+  SHEET_CSV_URL,
   POST_TZ = 'UTC',
 } = process.env;
 
-if (!ANTHROPIC_API_KEY) {
-  console.error('fatal: ANTHROPIC_API_KEY is not set');
+// Gemini first: its free tier covers one post a day many times over, which is
+// what lets this pipeline run at no cost. Anthropic stays as an opt-in fallback
+// for anyone who would rather pay for a different model.
+const PROVIDER = GEMINI_API_KEY ? 'gemini' : ANTHROPIC_API_KEY ? 'anthropic' : null;
+
+if (!PROVIDER) {
+  console.error(
+    'fatal: no model provider configured. Set GEMINI_API_KEY (free tier at ' +
+      'aistudio.google.com) or ANTHROPIC_API_KEY.',
+  );
   process.exit(1);
 }
 
@@ -143,6 +160,77 @@ async function recentGitHubActivity() {
   }
 }
 
+/** Last 20 non-empty lines, so an old log cannot crowd out this week. */
+function tidyRows(text) {
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(-20)
+    .join('\n');
+}
+
+/**
+ * Mohit's work log. Two ways in, deliberately:
+ *
+ *   GOOGLE_SA_JSON + SHEET_ID  a service-account key. Nothing is public.
+ *                              Preferred, because the log describes client work.
+ *   SHEET_CSV_URL              File > Share > Publish to web > CSV. No auth at
+ *                              all, but then anyone with the link can read it.
+ *
+ * An unreachable sheet is never fatal: it just means one less source of real
+ * material, and the guardrail falls back to a trending post.
+ */
+async function workLogRows() {
+  try {
+    if (SHEET_CSV_URL) {
+      const res = await fetch(SHEET_CSV_URL);
+      if (!res.ok) throw new Error(`sheet csv ${res.status}`);
+      return tidyRows(await res.text());
+    }
+    if (!GOOGLE_SA_JSON || !SHEET_ID) return '';
+
+    // Service-account auth by hand rather than pulling in googleapis: it is a
+    // signed JWT exchanged for an access token, and the whole dance is shorter
+    // than the dependency's install footprint.
+    const sa = JSON.parse(GOOGLE_SA_JSON);
+    const now = Math.floor(Date.now() / 1000);
+    const b64 = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');
+    const unsigned = `${b64({ alg: 'RS256', typ: 'JWT' })}.${b64({
+      iss: sa.client_email,
+      scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
+      aud: 'https://oauth2.googleapis.com/token',
+      iat: now,
+      exp: now + 3600,
+    })}`;
+    const assertion = `${unsigned}.${createSign('RSA-SHA256')
+      .update(unsigned)
+      .sign(sa.private_key, 'base64url')}`;
+
+    const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        assertion,
+      }),
+    });
+    if (!tokenRes.ok) throw new Error(`google token ${tokenRes.status}`);
+    const { access_token: token } = await tokenRes.json();
+
+    const res = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_RANGE)}`,
+      { headers: { authorization: `Bearer ${token}` } },
+    );
+    if (!res.ok) throw new Error(`sheets ${res.status}`);
+    const { values = [] } = await res.json();
+    return tidyRows(values.map((row) => row.join(', ')).join('\n'));
+  } catch (err) {
+    console.warn(`work log unavailable: ${err.message}`);
+    return '';
+  }
+}
+
 /** Front-page Hacker News plus dev.to's top articles, as candidate topics. */
 async function trendingCandidates() {
   const out = [];
@@ -193,11 +281,11 @@ async function recentPosts() {
   return { summaries: summaries.join('\n\n'), slugs, files };
 }
 
-function buildPrompt({ kind, date, weekday, voice, calendar, notes, activity, candidates, recent }) {
+function buildPrompt({ kind, date, weekday, voice, calendar, notes, activity, workLog, candidates, recent }) {
   const material =
     kind === 'trending'
       ? `## Candidate topics from public feeds\n\nPick exactly ONE that genuinely matters to a React / Node / TypeScript / AWS full-stack developer. Write Mohit's practical take on it — never a summary of someone else's article. Link the sources you actually used. Never copy their wording.\n\n${candidates || '(feeds unavailable — write about a technology development you can state accurately and verifiably from your own knowledge, and link only to primary sources such as official release notes or repositories)'}`
-      : `## Mohit's real material — the ONLY permissible basis for this post\n\n### Notes inbox\n${notes || '(empty)'}\n\n### Recent GitHub activity\n${activity || '(none found)'}\n\nEvery specific in the post must trace to the material above. Do not add a bug, client, project, colleague, or measurement that does not appear there. If the material will not support 500 words honestly, say so by returning kind "trending" and writing a trending post instead.`;
+      : `## Mohit's real material — the ONLY permissible basis for this post\n\n### Notes inbox\n${notes || '(empty)'}\n\n### Recent GitHub activity\n${activity || '(none found)'}\n\n### Daily work log\n${workLog || '(empty)'}\n\nEvery specific in the post must trace to the material above. Do not add a bug, client, project, colleague, or measurement that does not appear there. If the material will not support 700 words honestly, say so by returning kind "trending" and writing a trending post instead.`;
 
   return `You write the daily blog post for Mohit Parmar's developer portfolio. You are writing AS Mohit, in first person.
 
@@ -240,7 +328,44 @@ Return ONLY a single JSON object, no prose around it and no code fence:
 }`;
 }
 
-async function callClaude(prompt) {
+/** Pulls the first JSON object out of a model's reply. */
+function extractJson(text) {
+  // Tolerate a stray code fence or a sentence of preamble rather than failing
+  // the whole run over punctuation.
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start === -1 || end === -1) {
+    throw new Error(`no JSON object in response: ${text.slice(0, 300)}`);
+  }
+  return JSON.parse(text.slice(start, end + 1));
+}
+
+async function callGemini(prompt) {
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+    {
+      method: 'POST',
+      // The key goes in a header rather than the query string so it cannot leak
+      // into a redirect or an error message that quotes the URL.
+      headers: { 'content-type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          maxOutputTokens: 8000,
+          temperature: 0.7,
+          responseMimeType: 'application/json',
+        },
+      }),
+    },
+  );
+  if (!res.ok) throw new Error(`gemini ${res.status}: ${(await res.text()).slice(0, 500)}`);
+  const json = await res.json();
+  const text = (json.candidates?.[0]?.content?.parts ?? []).map((part) => part.text ?? '').join('');
+  if (!text) throw new Error(`gemini returned no text: ${JSON.stringify(json).slice(0, 300)}`);
+  return extractJson(text);
+}
+
+async function callAnthropic(prompt) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -260,14 +385,10 @@ async function callClaude(prompt) {
     .filter((block) => block.type === 'text')
     .map((block) => block.text)
     .join('');
-
-  // Tolerate a stray code fence or a sentence of preamble rather than failing
-  // the whole run over punctuation.
-  const start = text.indexOf('{');
-  const end = text.lastIndexOf('}');
-  if (start === -1 || end === -1) throw new Error(`no JSON object in response: ${text.slice(0, 300)}`);
-  return JSON.parse(text.slice(start, end + 1));
+  return extractJson(text);
 }
+
+const generate = (prompt) => (PROVIDER === 'gemini' ? callGemini(prompt) : callAnthropic(prompt));
 
 /** Returns a list of human-readable problems; empty means the draft is publishable. */
 function validate(draft, { date, takenSlugs }) {
@@ -281,7 +402,7 @@ function validate(draft, { date, takenSlugs }) {
   if (takenSlugs.includes(draft.slug)) problems.push(`slug "${draft.slug}" is already used`);
 
   const words = draft.body.trim().split(/\s+/).length;
-  if (words < 500 || words > 900) problems.push(`body is ${words} words, must be 500-900`);
+  if (words < 700 || words > 1100) problems.push(`body is ${words} words, must be 700-1100`);
 
   if (/^#\s/m.test(draft.body)) problems.push('body contains an H1; the site renders the title');
 
@@ -331,9 +452,10 @@ async function main() {
   // The guardrail, applied before the model is consulted.
   let kind = scheduledKind;
   let activity = '';
+  let workLog = '';
   if (EXPERIENCE_KINDS.has(scheduledKind)) {
-    activity = await recentGitHubActivity();
-    if (!notes && !activity) {
+    [activity, workLog] = await Promise.all([recentGitHubActivity(), workLogRows()]);
+    if (!notes && !activity && !workLog) {
       console.log(
         `daily-post: ${weekday} calls for "${scheduledKind}" but there is no real material — falling back to trending`,
       );
@@ -353,6 +475,7 @@ async function main() {
     calendar,
     notes,
     activity,
+    workLog,
     candidates,
     recent,
   });
@@ -365,7 +488,7 @@ async function main() {
         ? basePrompt
         : `${basePrompt}\n\n# Your previous draft was rejected\n\nFix every one of these and return the corrected JSON object:\n${problems.map((p) => `- ${p}`).join('\n')}`;
 
-    draft = await callClaude(prompt);
+    draft = await generate(prompt);
     problems = validate(draft, { date, takenSlugs: recent.slugs });
     if (!problems.length) break;
     console.warn(`daily-post: draft ${attempt} rejected —\n${problems.map((p) => `  - ${p}`).join('\n')}`);
@@ -378,7 +501,7 @@ async function main() {
 
   // The guardrail again, after the fact: the model may downgrade an experience
   // post to trending, but it may never upgrade its way into one.
-  if (EXPERIENCE_KINDS.has(draft.kind) && !notes && !activity) {
+  if (EXPERIENCE_KINDS.has(draft.kind) && !notes && !activity && !workLog) {
     console.error('daily-post: draft claims an experience format with no source material, refusing');
     process.exit(1);
   }
