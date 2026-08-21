@@ -38,14 +38,39 @@ jobs:
       - name: Draft today's post
         run: node scripts/write-daily-post.mjs
         env:
+          # Gemini's free tier is what makes this run at no cost; Anthropic is
+          # an optional fallback and is only used when no Gemini key is set.
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          # Optional repository variables; the script has defaults for both.
+          # Optional repository variables; the script has defaults for all.
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
           POST_TZ: ${{ vars.POST_TZ }}
+          # The daily work log, when configured. Either the service-account
+          # pair (private) or a published CSV URL (public) — see the README.
+          GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          SHEET_CSV_URL: ${{ secrets.SHEET_CSV_URL }}
+          SHEET_RANGE: ${{ vars.SHEET_RANGE }}
           # Read-only use: reading the owner's public event feed to decide
           # whether there is real material for an experience post.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.repository_owner }}
+
+      # Every post ships with a cover: it is the image on LinkedIn, dev.to and
+      # in search results. Chromium is affordable here because this job runs
+      # once a day — deploy.yml runs on every push and deliberately has none.
+      - name: Render the cover image
+        run: |
+          slug=$(git status --porcelain -- posts \
+            | awk '{print $2}' | head -1 \
+            | sed 's#posts/[0-9-]*##; s#\.md$##')
+          if [ -z "$slug" ]; then
+            echo "no new post — nothing to illustrate"
+            exit 0
+          fi
+          npx --yes playwright install --with-deps chromium
+          node scripts/make-cover.mjs "$slug"
 
       # The same gate the site is built with. A draft that breaks frontmatter
       # parsing or the type check fails here, before anything is committed —
@@ -55,13 +80,13 @@ jobs:
 
       - name: Commit and push
         run: |
-          if [ -z "$(git status --porcelain -- posts content)" ]; then
+          if [ -z "$(git status --porcelain -- posts content public/covers)" ]; then
             echo "nothing to publish — today's post already existed"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add posts content
+          git add posts content public/covers
           title=$(git diff --cached --name-only -- posts \
             | head -1 \
             | xargs -r -I{} sh -c "grep -m1 '^title:' {} | sed \"s/^title: *//; s/^'//; s/'$//\"")
@@ -70,3 +95,26 @@ jobs:
           # bookkeeping commit on main while this job was drafting.
           git pull --rebase origin main
           git push origin HEAD:main
+
+      # Four scheduled runs failed in silence before this existed. A failed run
+      # must leave something a human will see.
+      - name: Report the failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}` +
+              `/actions/runs/${context.runId}`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Daily post failed — ${new Date().toISOString().slice(0, 10)}`,
+              body: [
+                `The scheduled daily post did not publish.`,
+                ``,
+                `Run: ${url}`,
+                ``,
+                `Most common cause: \`GEMINI_API_KEY\` is missing or the model name in`,
+                `the \`GEMINI_MODEL\` variable is not one your key can reach.`,
+              ].join('\n'),
+            });
