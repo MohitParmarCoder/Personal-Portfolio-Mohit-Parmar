@@ -13,6 +13,10 @@ on:
 # and crosspost.yml in turn.
 permissions:
   contents: write
+  # The failure reporter opens an issue, and issues.create is refused with a
+  # 403 under contents-only. Without this the job fails silently, which is the
+  # exact behaviour the reporter exists to end.
+  issues: write
 
 # A manual run started while the scheduled one is mid-flight would race it for
 # the same filename; queue instead.
